@@ -1,11 +1,12 @@
 "use client";
-import React, { ChangeEvent, useState } from "react";
+
+import * as z from "zod";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
+import { usePathname, useRouter } from "next/navigation";
+import { ChangeEvent, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter,usePathname } from "next/navigation";
-import { UserValidation } from "@/lib/validations/user";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+
 import {
   Form,
   FormControl,
@@ -13,14 +14,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import * as z from "zod";
-import Image from "next/image";
-import { isBase64Image } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+
 import { useUploadThing } from "@/lib/uploadthing";
-import { updateUser } from "@/lib/actions/user.action";
+import { isBase64Image } from "@/lib/utils";
+
+import { UserValidation } from "@/lib/validations/user";
+import { updateUser } from "@/lib/actions/user.actions";
+
 interface Props {
   user: {
     id: string;
@@ -33,16 +37,14 @@ interface Props {
   btnTitle: string;
 }
 
-
 const AccountProfile = ({ user, btnTitle }: Props) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { startUpload } = useUploadThing("media");
 
-  
+  const [files, setFiles] = useState<File[]>([]);
 
-    const [files, setFiles] = useState<File[]>([]);
-    const { startUpload } = useUploadThing("media");
-    const router=useRouter();
-    const pathname = usePathname();
-  const form = useForm({
+  const form = useForm<z.infer<typeof UserValidation>>({
     resolver: zodResolver(UserValidation),
     defaultValues: {
       profile_photo: user?.image ? user.image : "",
@@ -53,13 +55,14 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
   });
 
   const onSubmit = async (values: z.infer<typeof UserValidation>) => {
-    const blob=values.profile_photo;
-    const hasImageChanged=isBase64Image(blob);
-    if(hasImageChanged){
-      const imgRes = await startUpload(files)
+    const blob = values.profile_photo;
 
-      if(imgRes && imgRes[0].url){
-        values.profile_photo=imgRes[0].url
+    const hasImageChanged = isBase64Image(blob);
+    if (hasImageChanged) {
+      const imgRes = await startUpload(files);
+
+      if (imgRes && imgRes[0].fileUrl) {
+        values.profile_photo = imgRes[0].fileUrl;
       }
     }
 
@@ -101,6 +104,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       fileReader.readAsDataURL(file);
     }
   };
+
   return (
     <Form {...form}>
       <form

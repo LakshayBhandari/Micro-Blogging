@@ -1,10 +1,9 @@
 import { redirect } from "next/navigation";
 
-
-import { fetchUserPosts } from "@/lib/actions/user.action";
+import { fetchCommunityPosts } from "@/lib/actions/community.actions";
+import { fetchUserPosts } from "@/lib/actions/user.actions";
 
 import ThreadCard from "../cards/ThreadCard";
-import { fetchCommunityPosts } from "@/lib/actions/community.action";
 
 interface Result {
   name: string;

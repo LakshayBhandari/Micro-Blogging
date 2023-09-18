@@ -7,13 +7,12 @@ import { usePathname } from "next/navigation";
 import { sidebarLinks } from "@/constants";
 
 function Bottombar() {
-
-
   const pathname = usePathname();
+
   return (
-    <section className='bottombar' >
-       <div className='bottombar_container'>
-       {sidebarLinks.map((link) => {
+    <section className='bottombar'>
+      <div className='bottombar_container'>
+        {sidebarLinks.map((link) => {
           const isActive =
             (pathname.includes(link.route) && link.route.length > 1) ||
             pathname === link.route;
@@ -38,9 +37,9 @@ function Bottombar() {
             </Link>
           );
         })}
-       </div>
-    </section >
-  )
+      </div>
+    </section>
+  );
 }
 
-export default Bottombar
+export default Bottombar;
