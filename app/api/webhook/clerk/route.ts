@@ -4,12 +4,11 @@
 
 // Resource: https://docs.svix.com/receiving/verifying-payloads/why
 // It's a good practice to verify webhooks. Above article shows why we should do it
-import { Webhook, WebhookRequiredHeaders } from "svix";
 import { headers } from "next/headers";
+import { Webhook, WebhookRequiredHeaders } from "svix";
 
 import { IncomingHttpHeaders } from "http";
 
-import { NextResponse } from "next/server";
 import {
   addMemberToCommunity,
   createCommunity,
@@ -17,6 +16,7 @@ import {
   removeUserFromCommunity,
   updateCommunityInfo,
 } from "@/lib/actions/community.actions";
+import { NextResponse } from "next/server";
 
 // Resource: https://clerk.com/docs/integration/webhooks#supported-events
 // Above document lists the supported events
@@ -76,8 +76,7 @@ export const POST = async (request: Request) => {
         name,
         slug,
         logo_url || image_url,
-        "org bio",
-        created_by
+        "org bio"
       );
 
       return NextResponse.json({ message: "User created" }, { status: 201 });
